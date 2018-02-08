@@ -16,6 +16,7 @@ using namespace std;
 
 #include "Shader.h"
 
+#include "Image.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -78,6 +79,21 @@ int main() {
 	//Создание вершин конец
 
 
+	////Создание вершин
+	//GLuint INTvertices[] = {
+	//	// Positions           // Texture Coords
+	//	200,  200, 0,     10, 10,			// Top Right
+	//	200, -50, 0,     10, 0,			// Bottom Right
+	//	-80, -200, 0,    0, 0,			// Bottom Let
+	//	-200,  200, 0,    0, 10			// Top Let 
+	//};
+	//GLuint INTindices[] = {  // Помните, что мы начинаем с 0!
+	//	0, 1, 3,   // Первый треугольник
+	//	1, 2, 3    // Второй треугольник
+	//};
+	////Создание вершин конец
+
+
 	//Буферная магия
 	GLuint VBO, VAO, EBO;	//Для идентификаторов
 	glGenVertexArrays(1, &VAO);	//Выделяет N идентефикаторов и записыват во второй параметр
@@ -100,6 +116,14 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
+	//// Position attribute
+	//glVertexAttribPointer(0, 3, GL_UNSIGNED_INT, GL_TRUE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	//glEnableVertexAttribArray(0);
+
+	//// TexCoord attribute
+	//glVertexAttribPointer(2, 2, GL_UNSIGNED_INT, GL_TRUE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(2);
+
 	glBindVertexArray(0);
 	//Буферная магия
 //=============================================================
@@ -107,35 +131,38 @@ int main() {
 
 	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
 
-	//Текстура
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT (usually basic wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// Set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	int width2, height2, chan;
-	unsigned char* image = SOIL_load_image("test4.png", &width2, &height2, &chan, SOIL_LOAD_RGBA);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	////Текстура
+	//GLuint texture;
+	//glGenTextures(1, &texture);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT (usually basic wrapping method)
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//// Set texture filtering parameters
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//int width2, height2, chan;
+	//unsigned char* image = SOIL_load_image("test4.png", &width2, &height2, &chan, SOIL_LOAD_RGBA);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	//SOIL_free_image_data(image);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
+	Image img1("test4.png");
 
 	//Запуск окна
 	while (!glfwWindowShouldClose(window))
 	{
+		//Ловим события
 		glfwPollEvents();
 
+		//Фоновый цвет
 		glClearColor(0.2f, 0.3f, 0.3f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		shaderProgram.Use();
-
+		//Отрисовка
+		glBindTexture(GL_TEXTURE_2D, img1.getTexture());
 		glBindVertexArray(VAO);
+		shaderProgram.Use();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
@@ -143,6 +170,7 @@ int main() {
 	}
 
 
+	//Очистка ресурсов OpenGL
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
