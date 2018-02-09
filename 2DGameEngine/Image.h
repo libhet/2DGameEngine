@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <SOIL\SOIL.h>
-
 #include <iostream>
 
 // Содержит квадрат из вершин
@@ -36,7 +35,7 @@ public:
 		  height(img.height),
 		  channels(img.channels) 
 	{
-		std::cout << "copy" << endl;
+		std::cout << "copy" << std::endl;
 		for (size_t i = 0; i < img.width*img.height*img.channels; i++) {
 			image[i] = img.image[i];
 		}
@@ -63,7 +62,7 @@ public:
 		  height(img.height),
 		  channels(img.channels)
 	{
-		std::cout << "move" << endl;
+		std::cout << "move" << std::endl;
 		img.image = nullptr;
 	}
 	Image & operator=(Image && img) {
@@ -89,7 +88,7 @@ public:
 	int getHeight() {
 		return height;
 	}
-	string getName() {
+	std::string getName() {
 		return name;
 	}
 	size_t size() {

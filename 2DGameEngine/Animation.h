@@ -6,7 +6,7 @@
 class Animation {
 public:
 	Animation() = default;
-	Animation(std::initializer_list<Image*> list) : mImages(list) {	}
+	Animation(std::initializer_list<Image> list) : mImages(std::move(list)) {	}
 	Animation(int size) { 
 		mImages.reserve(size);
 	}
@@ -16,7 +16,7 @@ public:
 	}
 	~Animation() = default;
 	void addImage(Image const & image) {
-		mImages.push_back(image);
+		mImages.emplace_back(std::move(image));
 	}
 	void setDelay(int delay) {
 		mDelay = delay;
@@ -55,6 +55,6 @@ public:
 		}
 	
 private:
-	std::vector<Image*> mImages;
+	std::vector<Image> mImages;
 	int mDelay = 1;
 };

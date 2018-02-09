@@ -119,6 +119,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GraphicSystem.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderOpenGL.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GraphicSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderOpenGL.cpp" />
   </ItemGroup>

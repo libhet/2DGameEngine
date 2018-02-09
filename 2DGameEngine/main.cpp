@@ -20,14 +20,24 @@ using namespace std;
 
 #include "Animation.h"
 
+#include "GraphicSystem.h"
+
 int main() {
+
+	GraphicSystem::is(OpenGL);
+
 	Image a("test.png");
 	Image b("test2.png");
 	Image c("test3.png");
 	Image d("test4.png");
 
 
-	Animation e({ &a,&b,&c,&d });
+	Animation e(4);
+	//e = { a,b,c,d };
+	e.addImage(a);
+	e.addImage(b);
+	e.addImage(c);
+	e.addImage(d);
 	for (Image a : e) {
 		cout << a.getName() << endl;
 	}
