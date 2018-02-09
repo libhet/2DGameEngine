@@ -1,53 +1,16 @@
 #include <iostream>
 
-#include <vector>
-
-// GLEW
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-// GLFW
-#include <GLFW3/glfw3.h>
-
-#include <SOIL/SOIL.h>
-
 using namespace std;
 
-#include <fstream>
-#include <sstream>
-
-#include "Shader.h"
-
-#include "Animation.h"
-
-#include "GraphicSystem.h"
 #include "RenderOpenGL.h"
 
 int main() {
 
-	//GraphicSystem::is(OpenGL);
-
-	Image a("test.png");
-	Image b("test2.png");
-	Image c("test3.png");
-	Image d("test4.png");
-	
-	RenderOpenGL rogl;
-	rogl.InitWindow(1000, 1000, "Super Mega OpenGL Window!!!");
-	rogl.DrawImageImpl(b);
-
-
-	Animation e(4);
-	e = { a,b,c,d };
-	//e.addImage(a);
-	//e.addImage(b);
-	//e.addImage(c);
-	//e.addImage(d);
-	for (Image v : e) {
-		cout << a.getName() << endl;
-
-	}
+	Render OpenGL(new RenderOpenGL());
+	OpenGL.InitWindow(1000, 1000, "Test");
+	OpenGL.DrawImage(OpenGL.LoadImage("test2.png"));
 	return 0;
+
 }
 
 

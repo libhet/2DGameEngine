@@ -1,30 +1,28 @@
 #pragma once
-#include "Render.h"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW3/glfw3.h>
 #include "Shader.h"
-#include <exception>
+#include "Render.h"
+#include <exception>	// Throw if window not created?
 
-// Конкретная реализация методов рендера для OpenGL
-//ДОБАВИТЬ OVERRID
-#include "Animation.h"
-
+//Add callback functional
 
 class RenderOpenGL 
-	//: public _RenderImpl 
+	: public _RenderImpl 
 {
-private:
-	GLFWwindow* _window;
-	int _wWidth;
-	int _wHeight; 
-	const char* _wTitle;
-	void(*key_callback)(GLFWwindow*, int, int, int, int);
 public:
-	RenderOpenGL() = default;
-	virtual ~RenderOpenGL() = default;
+	 RenderOpenGL() = default;
+	~RenderOpenGL() = default;
 
-	virtual void InitWindow(int wWidth, int wHeight, char const * wTitle);
-	virtual Image LoadImageImpl(char const * filename) ;
-	virtual void DrawImageImpl(Image const & img) ;
+	void	InitWindow(int wWidth, int wHeight, char const * wTitle) override;
+	Image	LoadImageImpl(char const * filename) override;
+	void	DrawImageImpl(Image const & img) override;
+
+private:
+	GLFWwindow	*_window;
+	int			_wWidth;
+	int			_wHeight;
+	const char  *_wTitle;
+	void(*key_callback)(GLFWwindow*, int, int, int, int);
 };
