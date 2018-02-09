@@ -1,5 +1,7 @@
 #include "RenderOpenGL.h"
-
+#include <chrono>
+#include <thread>
+#define Sleep(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
 void RenderOpenGL::InitWindow(int wWidth, int wHeight, char const * wTitle)
 {
@@ -114,7 +116,7 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 			glfwPollEvents();
 	
 			//Фоновый цвет
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 	
 			//Отрисовка
@@ -135,6 +137,108 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 	
 		//Закрытие окна
 		glfwTerminate();
+
+}
+
+void RenderOpenGL::DrawAnimationImpl(Animation & ani)
+{
+	int ani_height= ani.begin()->getHeight();
+	int ani_width = ani.begin()->getWidth();
+	GLfloat y = 1 * (float(ani_height) / float(_wHeight));
+	GLfloat x = 1 * (float(ani_width) / float(_wWidth));
+
+	//Создание вершин
+	GLfloat vertices[] = {
+		// Positions     // Texture Coords
+		x,  y, 0.0f,    1.0f, 1.0f,
+		x, -y, 0.0f,    1.0f, 0.0f,
+		-x, -y, 0.0f,   0.0f, 0.0f,
+		-x,  y, 0.0f,   0.0f, 1.0f
+	};
+	GLuint indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+	//Создание вершин конец
+
+	//Буферная магия
+	GLuint VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// TexCoord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0);
+	//Буферная магия
+	//=============================================================
+
+	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
+	GLuint *textures = new GLuint [ani.size()];
+	glGenTextures(ani.size(), textures);
+
+	//Настройка текстуры
+	for (int i = 0; i < ani.size(); ++i) {
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ani_width, ani_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, ani[i].getData());
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	
+	int i = 0;
+	//Запуск окна
+	while (!glfwWindowShouldClose(_window))
+	{
+		//Ловим события
+		glfwPollEvents();
+
+		//Фоновый цвет
+		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Отрисовка
+
+
+			glBindTexture(GL_TEXTURE_2D, textures[i]);
+			shaderProgram.Use();
+			glBindVertexArray(VAO);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glBindVertexArray(0);
+
+
+		glfwSwapBuffers(_window);
+		Sleep(1000/50);
+		i == ani.size() ? i = 0 : i++;
+	}
+
+	//Очистка ресурсов OpenGL
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	delete[] textures;
+	//Закрытие окна
+	glfwTerminate();
 
 }
 

@@ -18,6 +18,7 @@ public:
 	void	InitWindow(int wWidth, int wHeight, char const * wTitle) override;
 	Image	LoadImageImpl(char const * filename) override;
 	void	DrawImageImpl(Image const & img) override;
+	void	DrawAnimationImpl(Animation & ani) override;
 
 private:
 	GLFWwindow	*_window;

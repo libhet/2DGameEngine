@@ -3,12 +3,16 @@
 using namespace std;
 
 #include "RenderOpenGL.h"
+#include "GameObject.h"
 
 int main() {
 
-	Render OpenGL(new RenderOpenGL());
-	OpenGL.InitWindow(1000, 1000, "Test");
-	OpenGL.DrawImage(OpenGL.LoadImage("test2.png"));
+	Animation ani("animation/anim", "png",1 ,9);
+	
+	Render OpenGL(&RenderOpenGL());
+	OpenGL.InitWindow(256, 256, "Test");
+
+	OpenGL.DrawAnimation(ani);
 	return 0;
 
 }
