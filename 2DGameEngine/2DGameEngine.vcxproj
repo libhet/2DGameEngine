@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderOpenGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fshader.glsl" />
