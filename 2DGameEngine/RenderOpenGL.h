@@ -8,15 +8,17 @@
 
 // Конкретная реализация методов рендера для OpenGL
 //ДОБАВИТЬ OVERRID
+#include "Animation.h"
 
 
-
-class RenderOpenGL : public _RenderImpl {
+class RenderOpenGL 
+	//: public _RenderImpl 
+{
 private:
-	GLFWwindow* window;
-	int wWidth;
-	int wHeight; 
-	const char* wTitle;
+	GLFWwindow* _window;
+	int _wWidth;
+	int _wHeight; 
+	const char* _wTitle;
 	void(*key_callback)(GLFWwindow*, int, int, int, int);
 public:
 	RenderOpenGL() = default;
@@ -24,5 +26,5 @@ public:
 
 	virtual void InitWindow(int wWidth, int wHeight, char const * wTitle);
 	virtual Image LoadImageImpl(char const * filename) ;
-	virtual void DrawImageImpl(Image const & img) override;
+	virtual void DrawImageImpl(Image const & img) ;
 };

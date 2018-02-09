@@ -76,22 +76,22 @@ public:
 		return *this;
 	}
 
-	unsigned char* getData() {
+	unsigned char* getData()const {
 		return image;
 	}
-	int getChannels() {
+	int getChannels()const {
 		return channels;
 	}
-	int getWidth() {
+	int getWidth()const {
 		return width;
 	}
-	int getHeight() {
+	int getHeight()const {
 		return height;
 	}
-	std::string getName() {
+	std::string getName()const {
 		return name;
 	}
-	size_t size() {
+	size_t size()const {
 		return width*height*channels;
 	}
 	//GLuint getTexture() {
