@@ -9,6 +9,7 @@ public:
 	virtual void	InitWindow(int wWidth, int wHeight, char const * wTitle) = 0;
 	virtual Image	LoadImageImpl(char const * filename) = 0;
 	virtual void	DrawImageImpl(Image const & img) = 0;
+	virtual void	DrawImageImpl2(Image const & img) = 0;
 	virtual void	DrawAnimationImpl(Animation & ani) = 0;
 };
 
@@ -26,7 +27,7 @@ public:
 		return _imp->LoadImageImpl(filename);
 	}
 	virtual void	DrawImage(Image const & img) {
-		_imp->DrawImageImpl(img);
+		_imp->DrawImageImpl2(img);
 	}
 	virtual void	DrawAnimation(Animation & ani) {
 		_imp->DrawAnimationImpl(ani);

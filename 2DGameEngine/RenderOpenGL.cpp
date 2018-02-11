@@ -54,7 +54,7 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 	GLfloat x = 1*(float(img.getWidth()) / float(_wWidth));
 
 		//Создание вершин
-			GLfloat vertices[] = {
+		GLfloat vertices[] = {
 				// Positions     // Texture Coords
 				 x,  y, 0.0f,    1.0f, 1.0f,	
 				 x, -y, 0.0f,    1.0f, 0.0f,	
@@ -258,5 +258,98 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 	//Закрытие окна
 	glfwTerminate();
 
+}
+
+void RenderOpenGL::DrawImageImpl2(Image const & img)
+{
+	GLfloat y = 1 * (float(img.getHeight()) / float(_wHeight));
+	GLfloat x = 1 * (float(img.getWidth()) / float(_wWidth));
+
+	GLfloat vertices[] = {
+		x,  y, 0.0f,    1.0f, 0.0f,
+		x, -y, 0.0f,    1.0f, 1.0f,
+		-x, -y, 0.0f,    0.0f, 1.0f,
+		-x,  y, 0.0f,    0.0f, 0.0f
+	};
+	GLuint indices[] = {
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	GLuint VBO, VAO, EBO;
+	generateBuffers(1, &VBO, &VAO, &EBO);
+	bindObject(0, &VAO, &VBO, &EBO, vertices, sizeof(vertices), indices, sizeof(indices));
+	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
+	GLuint texture;
+	glGenTextures(1, &texture);
+	bindTexture(texture, img);
+
+	while (!glfwWindowShouldClose(_window))
+	{
+		glfwPollEvents();
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//moveSquare(&positionX, &positionY, vertices[currentObject], &speed);
+
+		drawElement(0, texture, &shaderProgram, &VAO, &VBO, vertices, sizeof(vertices));
+
+		glfwSwapBuffers(_window);
+	}
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);
+		glDeleteBuffers(1, &EBO);
+	
+		glfwTerminate();
+}
+
+void RenderOpenGL::generateBuffers(int N, GLuint * VAO, GLuint * VBO, GLuint * EBO)
+{
+	glGenVertexArrays(N, VAO);
+	glGenBuffers(N, VBO);
+	glGenBuffers(N, EBO);
+}
+
+void RenderOpenGL::bindObject(int N, GLuint * VAO, GLuint * VBO, GLuint * EBO, GLfloat * vertices, int sizeofvertices, GLuint * indices, int sizeofindices)
+{
+	glBindVertexArray(VAO[N]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[N]);
+	glBufferData(GL_ARRAY_BUFFER, sizeofvertices, vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[N]);
+	auto a = sizeof(indices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeofindices, indices, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// TexCoord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0);
+}
+
+void RenderOpenGL::bindTexture(GLuint texture, Image const & img)
+{
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getWidth(), img.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.getData());
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void RenderOpenGL::drawElement(int N, GLuint texture, Shader * shaderProgram, GLuint * VAO, GLuint * VBO, GLfloat * vertices, int sizeofvertices)
+{
+	glBindTexture(GL_TEXTURE_2D, texture);
+	shaderProgram->Use();
+	glBindVertexArray(VAO[N]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[N]);
+	glBufferData(GL_ARRAY_BUFFER, sizeofvertices, vertices, GL_STATIC_DRAW);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 

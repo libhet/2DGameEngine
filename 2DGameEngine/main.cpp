@@ -4,14 +4,18 @@ using namespace std;
 
 #include "RenderOpenGL.h"
 #include "GameObject.h"
+#include "Scene.h"
 
 //int main() {
 //
 //	Animation ani("animation/anim", "png",1 ,9);
 //	
 //	Render OpenGL(&RenderOpenGL());
-//	OpenGL.InitWindow(256, 256, "Test");
-//	OpenGL.DrawAnimation(ani);
+//	OpenGL.InitWindow(800, 800, "Test");
+//	OpenGL.DrawImage(Image("ship.png"));
+//
+//
+//
 //	return 0;
 //
 //}
@@ -69,6 +73,8 @@ void bindTexture(GLuint texture, Image img) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getWidth(), img.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.getData());
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -114,10 +120,9 @@ int main() {
 
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
+	//glViewport(0, 0, width, height);
 
 	glfwSetKeyCallback(window, key_callback);
-	//Инициализация конец
 
 	//Разрешить прозрачность
 	glEnable(GL_ALPHA_TEST);
@@ -128,17 +133,17 @@ int main() {
 
 	GLfloat vertices[2][20] = {{
 		// Positions           // Texture Coords
-		0.5f,  0.5f, 0.0f,     1.0f, 1.0f,			// Top Right
-		0.5f, -0.5f, 0.0f,     1.0f, 0.0f,			// Bottom Right
-		-0.5f, -0.5f, 0.0f,    0.0f, 0.0f,			// Bottom Left
-		-0.5f,  0.5f, 0.0f,    0.0f, 1.0f			// Top Left 
+		5.5f,  1.5f*100, 0.0f,     3.0f, 100.0f,			// Top Right
+		5.5f, -1.5f*100, 0.0f,     3.0f, 0.0f,			// Bottom Right
+		-5.5f, -1.5f*100, 0.0f,    0.0f, 0.0f,			// Bottom Left
+		-5.5f,  1.5f*100, 0.0f,    0.0f, 100.0f			// Top Left 
 	},
 	{
 		// Positions           // Texture Coords
-		0.5f + 0.2,  0.5f + 0.2, 0.0f,     1.0f, 1.0f,			// Top Right
-		0.5f + 0.2, -0.5f + 0.2, 0.0f,     1.0f, 0.0f,			// Bottom Right
-		-0.5f + 0.2, -0.5f + 0.2, 0.0f,    0.0f, 0.0f,			// Bottom Left
-		-0.5f + 0.2,  0.5f + 0.2, 0.0f,    0.0f, 1.0f			// Top Left 
+		0.17875f,  0.32f, 0.0f,     1.0f, 0.0f,			// Top Right
+		0.17875f, -0.32f, 0.0f,     1.0f, 1.0f,			// Bottom Right
+		-0.17875f, -0.32f, 0.0f,    0.0f, 1.0f,			// Bottom Left
+		-0.17875f,  0.32f, 0.0f,    0.0f, 0.0f			// Top Left 
 	}
 };
 	GLuint indices[] = {  // Помните, что мы начинаем с 0!
@@ -146,69 +151,39 @@ int main() {
 		1, 2, 3    // Второй треугольник
 	};
 
-
-	//Буферная магия
 	GLuint VBO[10], VAO[10], EBO[10];
 	generateBuffers(2, VBO, VAO, EBO);
 
-	//Биндим первый объект
 	bindObject(0, VAO, VBO, EBO, vertices[0], sizeof(vertices[0]), indices, sizeof(indices));
 	bindObject(1, VAO, VBO, EBO, vertices[1], sizeof(vertices[1]), indices, sizeof(indices));
 
-	//Буферная магия
-//=============================================================
-	
-
 	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
 
-	//Текстура
 	GLuint texture[2];
 	glGenTextures(2, texture);
-	bindTexture(texture[0], Image("test4.png"));
-	bindTexture(texture[1], Image("test4.png"));
+	bindTexture(texture[0], Image("space.png"));
+	bindTexture(texture[1], Image("ship.png"));
 
-	//Запуск окна
 	while (!glfwWindowShouldClose(window))
 	{
-		//Ловим события
 		glfwPollEvents();
 
-		//Фоновый цвет
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Функция которая будет принимать скорость 
-		//и указатель на нужные вершины
 		moveSquare(&positionX, &positionY, vertices[currentObject], &speed);
 
-		//Отрисовка
-		//glBindTexture(GL_TEXTURE_2D, texture[0]);
-		//shaderProgram.Use();
-		//glBindVertexArray(VAO[0]);
-		//glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]), vertices[0], GL_STATIC_DRAW);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
 		drawElement(0, texture[0], &shaderProgram, VAO,VBO,vertices[0],sizeof(vertices[0]));
 
-		glBindTexture(GL_TEXTURE_2D, texture[1]);
-		shaderProgram.Use();
-		glBindVertexArray(VAO[1]);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[1]), vertices[1], GL_STATIC_DRAW);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		drawElement(1, texture[1], &shaderProgram, VAO, VBO, vertices[1], sizeof(vertices[1]));
 
 		glfwSwapBuffers(window);
 	}
 
-
-	//Очистка ресурсов OpenGL
 	glDeleteVertexArrays(2, VAO);
 	glDeleteBuffers(2, VBO);
 	glDeleteBuffers(2, EBO);
 
-	//Закрытие окна
 	glfwTerminate();
 
 	return 0;

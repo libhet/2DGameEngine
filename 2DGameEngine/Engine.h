@@ -3,8 +3,18 @@
 #include "Scene.h"
 
 class Engine {
+public:
+	Engine()
+	{
 
+	}
+	~Engine()
+	{
+
+	}
+
+	void Draw();
 private:
-	Render render;
-	Scene main_scene;
+	Render *render;
+	Scene *main_scene;
 };

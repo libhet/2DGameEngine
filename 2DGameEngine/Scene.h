@@ -1,17 +1,17 @@
 #pragma once
 #include "GameObject.h"
-#include <map>
+#include <unordered_map>
 
 class Scene {
 public:	
 	Scene() = default;
 	~Scene() = default;
 
-	void addObject(GameObject obj);
+	void addObject(std::string name, GameObject *obj);
 	void removeObject(std::string key);
 	GameObject* getPointer(std::string key);
-	void Draw();
+	void Draw(GLFWwindow* window);
 
 private:
-	std::map<std::string, GameObject*> objects;
+	std::unordered_map<std::string, GameObject*> objects;
 };
