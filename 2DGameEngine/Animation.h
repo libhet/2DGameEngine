@@ -1,4 +1,8 @@
 #pragma once
+#ifndef ANIMATION_H
+#define ANIMATION_H
+
+
 #include "Image.h"
 #include <vector>
 #include <iterator>
@@ -16,7 +20,6 @@ public:
 		mImages.reserve(size);
 		mDelay = delay;
 	}
-
 	Animation(std::string filename, std::string fileformat, int startN, int amt) {
 		mImages.reserve(amt);
 		std::stringstream imageName;
@@ -27,13 +30,14 @@ public:
 		}
 	}
 	~Animation() = default;
-	void addImage(Image const & image) {
+
+	void	addImage(Image const & image) {
 		mImages.emplace_back(std::move(image));
 	}
-	void setDelay(int delay) {
+	void	setDelay(int delay) {
 		mDelay = delay;
 	}
-	int size() {
+	int		size() {
 		return mImages.size();
 	}
 
@@ -75,13 +79,13 @@ public:
 		}
 		return mImages[current++];
 	}
-	
 	Image const & operator[](int i) {
 		return mImages[i];
 	}
 
 private:
-	std::vector<Image> mImages;
-	int mDelay = 1;
-	int current = 0;
+	std::vector<Image>	mImages;
+	int					mDelay = 1;
+	int					current = 0;
 };
+#endif // !ANIMATION_H

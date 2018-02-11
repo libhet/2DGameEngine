@@ -1,7 +1,5 @@
 #include "RenderOpenGL.h"
-#include <chrono>
-#include <thread>
-#define Sleep(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+
 
 void RenderOpenGL::InitWindow(int wWidth, int wHeight, char const * wTitle)
 {
@@ -147,6 +145,14 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 	GLfloat y = 1 * (float(ani_height) / float(_wHeight));
 	GLfloat x = 1 * (float(ani_width) / float(_wWidth));
 
+	//Алгоритм перемещения.
+	//Когда нажимается кнопка, какая то глобальная переменная равна 1
+	// умножается на скорость премещения и плюсуется
+	// когда кнопка отжимается то переменная равна 0
+	// и объект остается сдвинут но не перемещается
+
+
+	// У каждого изображения есть массив вершин 
 	//Создание вершин
 	GLfloat vertices[] = {
 		// Positions     // Texture Coords
@@ -189,10 +195,17 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 
 	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
 	GLuint *textures = new GLuint [ani.size()];
+
+	// Для анимации создается несолько объектов OpenGL
 	glGenTextures(ani.size(), textures);
 
 	//Настройка текстуры
 	for (int i = 0; i < ani.size(); ++i) {
+
+		//Функция настройки текстуры.
+		//Принимает указатель на данные изображения
+		//ширину и высоту
+		//
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -206,7 +219,7 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
-	int i = 0;
+	int i = 0;		//Тут нужен массив интов для каждой анимации
 	//Запуск окна
 	while (!glfwWindowShouldClose(_window))
 	{
@@ -217,18 +230,23 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//Отрисовка
-
-
+		//Отрисовка	//В цикле вызывать функцию которая описана ниже
+				//Написать функцию которая биндит текстуру использует шейдер. 
+				//биндит VAO рисует и отбиндивает
+				//принимает текстуру инт, вао инт
+		//Для каждого объекта нужен свой буфер
 			glBindTexture(GL_TEXTURE_2D, textures[i]);
 			shaderProgram.Use();
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
 
-
 		glfwSwapBuffers(_window);
+
 		Sleep(1000/50);
+		//цикл который пробегается по массиву интов 
+		//для всех анимаций в сцене
+
 		i == ani.size() ? i = 0 : i++;
 	}
 

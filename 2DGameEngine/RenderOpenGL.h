@@ -5,6 +5,9 @@
 #include "Shader.h"
 #include "Render.h"
 #include <exception>	// Throw if window not created?
+#include <chrono>
+#include <thread>
+#define Sleep(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
 //Add callback functional
 
