@@ -53,9 +53,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>

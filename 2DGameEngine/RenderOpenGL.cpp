@@ -6,8 +6,7 @@ void RenderOpenGL::InitWindow(int wWidth, int wHeight, char const * wTitle)
 	_wWidth = wWidth;
 	_wHeight = wHeight;
 	_wTitle = wTitle;
-		//Создание окна
-			//Инициализация
+
 			glfwInit();
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -35,9 +34,7 @@ void RenderOpenGL::InitWindow(int wWidth, int wHeight, char const * wTitle)
 			glViewport(0, 0, width, height);
 	
 			//glfwSetKeyCallback(_window, key_callback);
-			//Инициализация конец
-	
-			//Разрешить прозрачность
+
 			glEnable(GL_ALPHA_TEST);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -53,7 +50,6 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 	GLfloat y = 1*(float(img.getHeight()) / float(_wHeight));
 	GLfloat x = 1*(float(img.getWidth()) / float(_wWidth));
 
-		//Создание вершин
 		GLfloat vertices[] = {
 				// Positions     // Texture Coords
 				 x,  y, 0.0f,    1.0f, 1.0f,	
@@ -65,9 +61,7 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 			0, 1, 3,  
 			1, 2, 3    
 		};
-		//Создание вершин конец
 
-		//Буферная магия
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);	
 		glGenBuffers(1, &VBO);
@@ -81,17 +75,13 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	
-		// Position attribute
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
 	
-		// TexCoord attribute
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
 	
 		glBindVertexArray(0);
-		//Буферная магия
-	//=============================================================
 
 		Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
 		GLuint texture;
@@ -107,17 +97,13 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		//Запуск окна
 		while (!glfwWindowShouldClose(_window))
 		{
-			//Ловим события
 			glfwPollEvents();
 	
-			//Фоновый цвет
 			glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 	
-			//Отрисовка
 			glBindTexture(GL_TEXTURE_2D, texture);
 			shaderProgram.Use();
 			glBindVertexArray(VAO);
@@ -127,13 +113,10 @@ void RenderOpenGL::DrawImageImpl(Image const & img)
 			glfwSwapBuffers(_window);
 		}
 	
-	
-		//Очистка ресурсов OpenGL
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
 		glDeleteBuffers(1, &EBO);
 	
-		//Закрытие окна
 		glfwTerminate();
 
 }
@@ -145,15 +128,6 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 	GLfloat y = 1 * (float(ani_height) / float(_wHeight));
 	GLfloat x = 1 * (float(ani_width) / float(_wWidth));
 
-	//Алгоритм перемещения.
-	//Когда нажимается кнопка, какая то глобальная переменная равна 1
-	// умножается на скорость премещения и плюсуется
-	// когда кнопка отжимается то переменная равна 0
-	// и объект остается сдвинут но не перемещается
-
-
-	// У каждого изображения есть массив вершин 
-	//Создание вершин
 	GLfloat vertices[] = {
 		// Positions     // Texture Coords
 		x,  y, 0.0f,    1.0f, 1.0f,
@@ -165,9 +139,7 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 		0, 1, 3,
 		1, 2, 3
 	};
-	//Создание вершин конец
 
-	//Буферная магия
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -181,31 +153,21 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	// Position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
-	// TexCoord attribute
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
-	//Буферная магия
-	//=============================================================
 
 	Shader shaderProgram = Shader("vshader.glsl", "fshader.glsl");
 	GLuint *textures = new GLuint [ani.size()];
 
-	// Для анимации создается несолько объектов OpenGL
 	glGenTextures(ani.size(), textures);
 
-	//Настройка текстуры
 	for (int i = 0; i < ani.size(); ++i) {
 
-		//Функция настройки текстуры.
-		//Принимает указатель на данные изображения
-		//ширину и высоту
-		//
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -219,22 +181,14 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
-	int i = 0;		//Тут нужен массив интов для каждой анимации
-	//Запуск окна
+	int i = 0;	
 	while (!glfwWindowShouldClose(_window))
 	{
-		//Ловим события
 		glfwPollEvents();
 
-		//Фоновый цвет
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//Отрисовка	//В цикле вызывать функцию которая описана ниже
-				//Написать функцию которая биндит текстуру использует шейдер. 
-				//биндит VAO рисует и отбиндивает
-				//принимает текстуру инт, вао инт
-		//Для каждого объекта нужен свой буфер
 			glBindTexture(GL_TEXTURE_2D, textures[i]);
 			shaderProgram.Use();
 			glBindVertexArray(VAO);
@@ -244,18 +198,15 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 		glfwSwapBuffers(_window);
 
 		Sleep(1000/50);
-		//цикл который пробегается по массиву интов 
-		//для всех анимаций в сцене
 
 		i == ani.size() ? i = 0 : i++;
 	}
 
-	//Очистка ресурсов OpenGL
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	delete[] textures;
-	//Закрытие окна
+
 	glfwTerminate();
 
 }
@@ -305,7 +256,7 @@ void RenderOpenGL::DrawImageImpl2(Image const & img)
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	
-	//	glfwTerminate();
+	glfwTerminate();
 }
 
 void RenderOpenGL::generateBuffers(int N, GLuint * VAO, GLuint * VBO, GLuint * EBO)
@@ -356,38 +307,3 @@ void RenderOpenGL::drawElement(int N, GLuint texture, Shader * shaderProgram, GL
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
-
-void RenderOpenGL::addToRender(Image const & img) 
-{
-	GLfloat y = 1 * (float(img.getHeight()) / float(_wHeight));
-	GLfloat x = 1 * (float(img.getWidth()) / float(_wWidth));
-
-	GLfloat vertices[] = {
-		x,  y, 0.0f,    1.0f, 0.0f,
-		x, -y, 0.0f,    1.0f, 1.0f,
-		-x, -y, 0.0f,    0.0f, 1.0f,
-		-x,  y, 0.0f,    0.0f, 0.0f
-	};
-		vertices[0] = x;
-		vertices[1] = y;
-		vertices[5] = x;
-		vertices[6] = -y;
-		vertices[10] = -x;
-		vertices[11] = -y;
-		vertices[15] = -x;
-		vertices[16] = y;
-
-	m_vertices.push_back(vertices);
-
-	GLuint VBO, VAO, EBO;
-	generateBuffers(1, &VBO, &VAO, &EBO);
-	bindObject(0, &VAO, &VBO, &EBO, *std::prev(m_vertices.end()), sizeof(vertices), m_indices, sizeof(m_indices));
-	m_VBO.push_back(VBO);
-	m_VAO.push_back(VAO);
-	m_EBO.push_back(EBO);
-	GLuint texture;
-	glGenTextures(1, &texture);
-	bindTexture(texture, img);
-	m_texture.push_back(texture);
-}
-

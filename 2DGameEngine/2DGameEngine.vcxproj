@@ -132,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderOpenGL.cpp" />
     <ClCompile Include="Scene.cpp" />

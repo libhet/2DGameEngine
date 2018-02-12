@@ -4,9 +4,9 @@
 #include <GLFW3/glfw3.h>
 #include "Shader.h"
 #include "Render.h"
-#include <exception>	// Throw if window not created?
 #include <chrono>
 #include <thread>
+#include <exception>	// Throw if window not created?
 #define Sleep(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
 //Add callback functional
@@ -23,7 +23,6 @@ public:
 	void	DrawImageImpl(Image const & img) override;
 	void	DrawAnimationImpl(Animation & ani) override;
 	void	DrawImageImpl2(Image const & img) override;
-	void	addToRender(Image const & img) override;
 
 protected:
 	void	generateBuffers(int N, GLuint *VAO, GLuint *VBO, GLuint *EBO);
@@ -38,12 +37,4 @@ private:
 	int			_wHeight;
 	const char  *_wTitle;
 	void(*key_callback)(GLFWwindow*, int, int, int, int);
-
-	std::vector<GLfloat*> m_vertices;
-	GLuint m_indices[6] = { 0, 1, 3, 1, 2, 3 };
-	//Shader m_shaderProgram;
-	std::vector<GLuint> m_VBO;
-	std::vector<GLuint> m_VAO;
-	std::vector<GLuint> m_EBO;
-	std::vector<GLuint> m_texture;
 };

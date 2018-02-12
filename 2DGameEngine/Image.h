@@ -6,8 +6,6 @@
 #include <SOIL\SOIL.h>
 #include <iostream>
 
-//Delete output in copy constructors
-
 class Image {
 public:
 	Image() = default;

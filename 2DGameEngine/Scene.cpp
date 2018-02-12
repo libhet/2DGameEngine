@@ -25,12 +25,9 @@ void Scene::Draw(_Render * render)
 
 	}
 
-	std::vector<std::thread> threads;
-	threads.reserve(size);
-
 	int i = 0;
 	for (auto obj : objects) {
-	//	threads.push_back(std::thread(&RenderOpenGL::DrawImageImpl2, this, obj.second->getImg()[0]));
+	//	threads.push_back(std::thread(&_Render::DrawImage, render, obj.second->getImg()[0]));
 	}
 
 }

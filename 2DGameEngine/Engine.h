@@ -4,14 +4,8 @@
 
 class Engine {
 public:
-	Engine()
-	{
-
-	}
-	~Engine()
-	{
-
-	}
+	Engine() = default;
+	~Engine() = default;
 
 	void Draw();
 private:
