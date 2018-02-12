@@ -11,6 +11,8 @@ public:
 	virtual void	DrawImageImpl(Image const & img) = 0;
 	virtual void	DrawImageImpl2(Image const & img) = 0;
 	virtual void	DrawAnimationImpl(Animation & ani) = 0;
+
+	virtual void	addToRender(Image const & img) = 0;
 };
 
 class _Render {

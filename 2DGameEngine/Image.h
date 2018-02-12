@@ -10,6 +10,7 @@
 
 class Image {
 public:
+	Image() = default;
 	Image(std::string _filename) :  name(_filename)
 	{
 		image = SOIL_load_image(_filename.c_str(), &width, &height, &channels, SOIL_LOAD_RGBA);

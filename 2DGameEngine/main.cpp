@@ -8,13 +8,20 @@ using namespace std;
 
 //int main() {
 //
-//	Animation ani("animation/anim", "png",1 ,9);
+//	//Animation ani("animation/anim", "png",1 ,9);
 //	
 //	Render OpenGL(&RenderOpenGL());
 //	OpenGL.InitWindow(800, 800, "Test");
-//	OpenGL.DrawImage(Image("ship.png"));
+//	//OpenGL.DrawImage(Image("ship.png"));
+//	GameObject a(Image("test4.png"), 1, 1);
+//	GameObject b(Image("ship.png"), 1, 1);
+//	GameObject c(Image("test.png"), 1, 1);
+//	Scene sc;
+//	sc.addObject("a", &a);
+//	sc.addObject("b", &b);
+//	sc.addObject("c", &c);
 //
-//
+//	sc.Draw(&OpenGL);
 //
 //	return 0;
 //
@@ -87,6 +94,22 @@ void drawElement(int N, GLuint texture, Shader *shaderProgram, GLuint *VAO, GLui
 	glBufferData(GL_ARRAY_BUFFER, sizeofvertices, vertices, GL_STATIC_DRAW);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+}
+
+void test(GLFWwindow* window, int N, GLuint texture, Shader *shaderProgram, GLuint *VAO, GLuint *VBO, GLfloat *vertices, int sizeofvertices) {
+	while (!glfwWindowShouldClose(window))
+	{
+		glfwPollEvents();
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		moveSquare(&positionX, &positionY, vertices, &speed);
+
+		drawElement(N, texture, shaderProgram, VAO, VBO, vertices, sizeof(vertices));
+
+		glfwSwapBuffers(window);
+	}
 }
 
 int main() {
@@ -179,6 +202,7 @@ int main() {
 
 		glfwSwapBuffers(window);
 	}
+
 
 	glDeleteVertexArrays(2, VAO);
 	glDeleteBuffers(2, VBO);

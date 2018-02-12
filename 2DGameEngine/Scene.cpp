@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+
 void Scene::addObject(std::string name, GameObject *obj)
 {
 	objects.insert({ name, obj });
@@ -15,19 +16,22 @@ GameObject * Scene::getPointer(std::string key)
 	return objects[key];
 }
 
-void Scene::Draw(GLFWwindow* _window)
+void Scene::Draw(_Render * render)
 {
-	while (!glfwWindowShouldClose(_window))
-	{
-		glfwPollEvents();
+	int size = objects.size();
+	GLfloat *x = new GLfloat(size);
+	GLfloat *y = new GLfloat(size);
+	for (int i = 0; i < size; ++i) {
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+	}
 
+	std::vector<std::thread> threads;
+	threads.reserve(size);
+
+	int i = 0;
 	for (auto obj : objects) {
-		obj.second->Draw();
+	//	threads.push_back(std::thread(&RenderOpenGL::DrawImageImpl2, this, obj.second->getImg()[0]));
 	}
 
-	glfwSwapBuffers(_window);
-	}
 }
+

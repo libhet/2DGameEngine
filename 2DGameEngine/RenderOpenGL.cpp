@@ -262,6 +262,7 @@ void RenderOpenGL::DrawAnimationImpl(Animation & ani)
 
 void RenderOpenGL::DrawImageImpl2(Image const & img)
 {
+
 	GLfloat y = 1 * (float(img.getHeight()) / float(_wHeight));
 	GLfloat x = 1 * (float(img.getWidth()) / float(_wWidth));
 
@@ -286,6 +287,7 @@ void RenderOpenGL::DrawImageImpl2(Image const & img)
 
 	while (!glfwWindowShouldClose(_window))
 	{
+
 		glfwPollEvents();
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -296,12 +298,14 @@ void RenderOpenGL::DrawImageImpl2(Image const & img)
 		drawElement(0, texture, &shaderProgram, &VAO, &VBO, vertices, sizeof(vertices));
 
 		glfwSwapBuffers(_window);
+
+
 	}
-		glDeleteVertexArrays(1, &VAO);
-		glDeleteBuffers(1, &VBO);
-		glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	
-		glfwTerminate();
+	//	glfwTerminate();
 }
 
 void RenderOpenGL::generateBuffers(int N, GLuint * VAO, GLuint * VBO, GLuint * EBO)
@@ -351,5 +355,39 @@ void RenderOpenGL::drawElement(int N, GLuint texture, Shader * shaderProgram, GL
 	glBufferData(GL_ARRAY_BUFFER, sizeofvertices, vertices, GL_STATIC_DRAW);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+}
+
+void RenderOpenGL::addToRender(Image const & img) 
+{
+	GLfloat y = 1 * (float(img.getHeight()) / float(_wHeight));
+	GLfloat x = 1 * (float(img.getWidth()) / float(_wWidth));
+
+	GLfloat vertices[] = {
+		x,  y, 0.0f,    1.0f, 0.0f,
+		x, -y, 0.0f,    1.0f, 1.0f,
+		-x, -y, 0.0f,    0.0f, 1.0f,
+		-x,  y, 0.0f,    0.0f, 0.0f
+	};
+		vertices[0] = x;
+		vertices[1] = y;
+		vertices[5] = x;
+		vertices[6] = -y;
+		vertices[10] = -x;
+		vertices[11] = -y;
+		vertices[15] = -x;
+		vertices[16] = y;
+
+	m_vertices.push_back(vertices);
+
+	GLuint VBO, VAO, EBO;
+	generateBuffers(1, &VBO, &VAO, &EBO);
+	bindObject(0, &VAO, &VBO, &EBO, *std::prev(m_vertices.end()), sizeof(vertices), m_indices, sizeof(m_indices));
+	m_VBO.push_back(VBO);
+	m_VAO.push_back(VAO);
+	m_EBO.push_back(EBO);
+	GLuint texture;
+	glGenTextures(1, &texture);
+	bindTexture(texture, img);
+	m_texture.push_back(texture);
 }
 

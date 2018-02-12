@@ -23,12 +23,14 @@ public:
 	void	DrawImageImpl(Image const & img) override;
 	void	DrawAnimationImpl(Animation & ani) override;
 	void	DrawImageImpl2(Image const & img) override;
+	void	addToRender(Image const & img) override;
 
 protected:
 	void	generateBuffers(int N, GLuint *VAO, GLuint *VBO, GLuint *EBO);
 	void	bindObject(int N, GLuint *VAO, GLuint *VBO, GLuint *EBO, GLfloat *vertices, int sizeofvertices, GLuint *indices, int sizeofindices);
 	void	bindTexture(GLuint texture, Image const & img);
 	void	drawElement(int N, GLuint texture, Shader *shaderProgram, GLuint *VAO, GLuint *VBO, GLfloat *vertices, int sizeofvertices);
+
 
 private:
 	GLFWwindow	*_window;
@@ -37,10 +39,11 @@ private:
 	const char  *_wTitle;
 	void(*key_callback)(GLFWwindow*, int, int, int, int);
 
-	std::vector<GLuint[20]> m_vertices;
+	std::vector<GLfloat*> m_vertices;
 	GLuint m_indices[6] = { 0, 1, 3, 1, 2, 3 };
+	//Shader m_shaderProgram;
 	std::vector<GLuint> m_VBO;
 	std::vector<GLuint> m_VAO;
 	std::vector<GLuint> m_EBO;
-	std::vector<GLuint> texture;
+	std::vector<GLuint> m_texture;
 };
