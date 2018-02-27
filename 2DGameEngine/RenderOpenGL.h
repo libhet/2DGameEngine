@@ -33,8 +33,8 @@ protected:
 
 private:
 	GLFWwindow	*_window;
-	int			_wWidth;
-	int			_wHeight;
-	const char  *_wTitle;
+	int		_wWidth;
+	int		_wHeight;
+	const char  	*_wTitle;
 	void(*key_callback)(GLFWwindow*, int, int, int, int);
 };
